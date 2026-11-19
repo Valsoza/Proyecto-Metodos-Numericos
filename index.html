@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Métodos Numéricos - UNAM FES Acatlán</title>
+<style>
+  :root {
+    --morado: #6046b5;
+    --morado-oscuro: #483096;
+    --lila-claro: #efeafb;
+    --fondo: #f6f4fb;
+    --texto: #302b41;
+    --gris: #7d778c;
+    --borde: #e5e0f0;
+    --turquesa: #20a99a;
+    --azul: #3697b7;
+    --naranja: #e1992d;
+    --rojo: #e15b69;
+    --menta: #e8f7f3;
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  }
+
+  body {
+    background-color: var(--fondo);
+    color: var(--texto);
+    display: flex;
+    min-height: 100vh;
+  }
+
+  .sidebar {
+    width: 265px;
+    background: #ffffff;
+    border-right: 1px solid var(--borde);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 18px 22px 18px;
+    flex-shrink: 0;
+  }
+
+  .logo {
+    font-size: 21px;
+    font-weight: 800;
+    color: var(--morado);
+  }
+
+  .sub-logo {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gris);
+    letter-spacing: 0.5px;
+    margin-top: 4px;
+    margin-bottom: 28px;
+  }
+
+  .nav-section {
+    font-size: 10px;
+    font-weight: 700;
+    color: var(--gris);
+    padding-left: 12px;
+    margin: 18px 0 8px 0;
+    letter-spacing: 0.5px;
+  }
+
+  .nav-btn {
+    width: 100%;
+    text-align: left;
+    background: #ffffff;
+    color: var(--texto);
+    border: none;
+    padding: 11px 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-bottom: 6px;
+    transition: all 0.15s ease;
+    display: block;
+  }
+
+  .nav-btn:hover, .nav-btn.active {
+    background: var(--lila-claro);
+    color: var(--morado);
+  }
+
+  .sidebar-footer {
+    border-top: 1px solid var(--borde);
+    padding-top: 14px;
+    font-size: 11px;
+    color: var(--gris);
+  }
+
+  .main {
+    flex: 1;
+    padding: 26px 32px;
+    overflow-y: auto;
+  }
+
+  .view {
+    display: none;
+    max-width: 1150px;
+    margin: 0 auto;
+  }
+
+  .view.active {
+    display: block;
+  }
+
+  .header {
+    margin-bottom: 20px;
+  }
+
+  .header h1 {
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--texto);
+  }
+
+  .header p {
+    font-size: 13px;
+    color: var(--gris);
+    margin-top: 4px;
+  }
+
+  .card-white {
+    background: #ffffff;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 24px;
+    margin-bottom: 20px;
+  }
+
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+
+  .kpi-card {
+    background: #ffffff;
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 16px;
+    display: flex;
+    gap: 12px;
+  }
+
+  .kpi-bar {
+    width: 5px;
+    border-radius: 4px;
+    flex-shrink: 0;
+  }
+
+  .kpi-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--gris);
+  }
+
+  .kpi-val {
+    font-size: 20px;
+    font-weight: 800;
+    margin: 4px 0;
+    word-break: break-all;
+  }
+
+  .kpi-desc {
+    font-size: 11px;
+    color: var(--gris);
+  }
+
+  .method-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 18px;
+    margin-top: 16px;
+  }
+
+  .method-card {
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  .method-card h3 {
+    font-size: 17px;
+    margin-bottom: 4px;
+  }
+
+  .method-card .sub {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--texto);
+    margin-bottom: 10px;
+  }
+
+  .method-card p {
+    font-size: 13px;
+    color: var(--gris);
+    line-height: 1.5;
+    margin-bottom: 18px;
+  }
+
+  .btn {
+    border: none;
+    color: #ffffff;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 10px 18px;
+    border-radius: 7px;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    display: inline-block;
+  }
+
+  .btn:hover {
+    opacity: 0.9;
+  }
+
+  .btn-morado { background: var(--morado); }
+  .btn-turquesa { background: var(--turquesa); }
+  .btn-azul { background: var(--azul); }
+  .btn-naranja { background: var(--naranja); }
+  .btn-rojo { background: var(--rojo); }
+  .btn-gris { background: var(--gris); }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 16px;
+    margin: 16px 0;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .form-group label {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--texto);
+  }
+
+  .form-group input, .form-group select {
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    font-size: 14px;
+    color: var(--texto);
+    background: #ffffff;
+  }
+
+  .form-group input:focus, .form-group select:focus {
+    outline: 2px solid var(--morado);
+    border-color: transparent;
+  }
+
+  .matrix-wrapper {
+    overflow-x: auto;
+    margin: 16px 0;
+  }
+
+  .matrix-table {
+    border-collapse: separate;
+    border-spacing: 8px;
+  }
+
+  .matrix-table th {
+    font-size: 12px;
+    color: var(--morado);
+    text-align: center;
+  }
+
+  .matrix-table td input {
+    width: 78px;
+    padding: 8px;
+    text-align: center;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+
+  .matrix-table td input.vec-b {
+    background: var(--menta);
+    font-weight: 700;
+  }
+
+  .table-container {
+    overflow-x: auto;
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    margin-top: 12px;
+  }
+
+  table.res-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+    font-size: 12.5px;
+  }
+
+  table.res-table thead th {
+    background: var(--morado);
+    color: #ffffff;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    font-weight: 700;
+    padding: 11px 14px;
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  table.res-table thead th:first-child {
+    text-align: center;
+  }
+
+  table.res-table tbody td {
+    padding: 9px 14px;
+    border-bottom: 1px solid var(--borde);
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  table.res-table tbody td:first-child {
+    text-align: center;
+    font-weight: 700;
+  }
+
+  table.res-table tbody tr:nth-child(even) {
+    background: var(--fondo);
+  }
+
+  table.res-table tbody tr.converged-row {
+    background: var(--menta);
+    font-weight: 700;
+  }
+
+  .alert-box {
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 14px;
+    display: none;
+  }
+
+  .alert-error {
+    background: #ffe1e5;
+    color: #9e2230;
+    border: 1px solid #f5b8c0;
+  }
+
+  .alert-info {
+    background: var(--lila-claro);
+    color: var(--morado-oscuro);
+    border: 1px solid var(--borde);
+    display: block;
+  }
+
+  .team-box {
+    background: var(--lila-claro);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    padding: 18px 24px;
+    max-width: 500px;
+    margin: 24px auto;
+    text-align: center;
+  }
+
+  .team-box h4 {
+    color: var(--morado-oscuro);
+    font-size: 12px;
+    margin-bottom: 8px;
+    letter-spacing: 0.5px;
+  }
+
+  .team-box p {
+    font-size: 13.5px;
+    line-height: 1.7;
+    color: var(--texto);
+  }
+
+  pre.detail-box {
+    background: var(--fondo);
+    border: 1px solid var(--borde);
+    border-radius: 8px;
+    padding: 14px;
+    font-family: "SFMono-Regular", Consolas, monospace;
+    font-size: 13px;
+    overflow-x: auto;
+    margin-top: 14px;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 820px) {
+    body { flex-direction: column; }
+    .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--borde); }
+  }
+</style>
+</head>
+<body>
+
+  <aside class="sidebar">
+    <div>
+      <div class="logo">Métodos Numéricos</div>
+      <div class="sub-logo">UNAM • FES ACATLÁN</div>
+
+      <button type="button" class="nav-btn active" onclick="showView('portada', this)">Portada</button>
+      <button type="button" class="nav-btn" onclick="showView('menu-principal', this)">Menú Principal</button>
+      <button type="button" class="nav-btn" onclick="showView('intro', this)">Introducción</button>
+
+      <div class="nav-section">UNIDADES TEMÁTICAS</div>
+      <button type="button" class="nav-btn" onclick="showView('unidad2', this)">Unidad II • Raíces</button>
+      <button type="button" class="nav-btn" onclick="openUnidadMatricial('III', this)">Unidad III • Sistemas</button>
+      <button type="button" class="nav-btn" onclick="openUnidadMatricial('IV', this)">Unidad IV • Fact. LU</button>
+      <button type="button" class="nav-btn" onclick="openUnidadMatricial('V', this)">Unidad V • Eigenvalores</button>
+    </div>
+
+    <div class="sidebar-footer">
+      <button type="button" class="btn btn-rojo" style="width: 100%; margin-bottom: 10px;" onclick="salirPrograma()">Salir del programa</button>
+      <div>Entrega: 19-11-2026</div>
+    </div>
+  </aside>
+
+  <main class="main">
+
+    <!-- PORTADA -->
+    <section id="view-portada" class="view active">
+      <div class="card-white" style="text-align: center; padding: 38px 28px;">
+        <div style="font-size: 13px; font-weight: 800; color: var(--morado); margin-bottom: 10px;">
+          UNIVERSIDAD NACIONAL AUTÓNOMA DE MÉXICO • FES ACATLÁN
+        </div>
+        <h1 style="font-size: 29px; font-weight: 800; margin-bottom: 8px;">
+          Sistema de Solución Numérica de Ecuaciones
+        </h1>
+        <p style="font-size: 14px; color: var(--gris); max-width: 680px; margin: 0 auto 28px auto;">
+          Herramienta interactiva en ambiente gráfico para resolver los métodos numéricos del curso.
+        </p>
+
+        <div class="kpi-grid" style="text-align: left;">
+          <div class="kpi-card">
+            <div class="kpi-bar" style="background: var(--morado);"></div>
+            <div>
+              <div class="kpi-title">Unidad II</div>
+              <div class="kpi-val" style="color: var(--morado);">3 Métodos</div>
+              <div class="kpi-desc">Bisección, Newton-Raphson, Secante</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-bar" style="background: var(--turquesa);"></div>
+            <div>
+              <div class="kpi-title">Unidad III</div>
+              <div class="kpi-val" style="color: var(--turquesa);">3 Métodos</div>
+              <div class="kpi-desc">Gauss-Jordan, Gauss-Seidel, Jacobi</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-bar" style="background: var(--azul);"></div>
+            <div>
+              <div class="kpi-title">Unidad IV</div>
+              <div class="kpi-val" style="color: var(--azul);">2 Métodos</div>
+              <div class="kpi-desc">Factorización Doolittle y Crout</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-bar" style="background: var(--naranja);"></div>
+            <div>
+              <div class="kpi-title">Unidad V</div>
+              <div class="kpi-val" style="color: var(--naranja);">2 Métodos</div>
+              <div class="kpi-desc">Potencia y Potencia Inversa</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="team-box">
+          <h4>INTEGRANTES DEL EQUIPO</h4>
+          <p>
+            Jaramillo Diaz Brenda Naima<br>
+            Lerma Amezquita Mariana<br>
+            Limon Zamudio Andrea Yised<br>
+            Soria Zapata Valentina<br>
+          </p>
+        </div>
+
+        <button type="button" class="btn btn-morado" style="font-size: 14px; padding: 12px 26px;" onclick="showView('menu-principal')">
+          Ir al Menú Principal →
+        </button>
+      </div>
+    </section>
+
+    <!-- MENÚ PRINCIPAL -->
+    <section id="view-menu-principal" class="view">
+      <div class="header">
+        <h1>Menú Principal</h1>
+        <p>Seleccione una unidad temática para desplegar su menú secundario de métodos</p>
+      </div>
+      <div class="card-white">
+        <div class="method-grid">
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--morado);">UNIDAD II</h3>
+              <div class="sub">Ecuaciones No Lineales</div>
+              <p>Bisección, Newton-Raphson y Secante.</p>
+            </div>
+            <button type="button" class="btn btn-morado" onclick="showView('unidad2')">Abrir Unidad II</button>
+          </div>
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--turquesa);">UNIDAD III</h3>
+              <div class="sub">Sistemas de Ecuaciones Lineales</div>
+              <p>Gauss-Jordan, Gauss-Seidel y Jacobi (hasta 10×10).</p>
+            </div>
+            <button type="button" class="btn btn-turquesa" onclick="openUnidadMatricial('III')">Abrir Unidad III</button>
+          </div>
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--azul);">UNIDAD IV</h3>
+              <div class="sub">Factorización LU</div>
+              <p>Doolittle y Crout (hasta 10×10).</p>
+            </div>
+            <button type="button" class="btn btn-azul" onclick="openUnidadMatricial('IV')">Abrir Unidad IV</button>
+          </div>
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--naranja);">UNIDAD V</h3>
+              <div class="sub">Valores y Vectores Propios</div>
+              <p>Potencia y Potencia Inversa (hasta 10×10).</p>
+            </div>
+            <button type="button" class="btn btn-naranja" onclick="openUnidadMatricial('V')">Abrir Unidad V</button>
+          </div>
+          <div class="method-card" style="background: #fff5f6; border-color: #f5b8c0;">
+            <div>
+              <h3 style="color: var(--rojo);">SALIDA</h3>
+              <div class="sub">Finalizar sesión</div>
+              <p>Única opción oficial de salida desde el menú principal.</p>
+            </div>
+            <button type="button" class="btn btn-rojo" onclick="salirPrograma()">Salir</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INTRODUCCIÓN -->
+    <section id="view-intro" class="view">
+      <div class="header">
+        <h1>Introducción</h1>
+        <p>Fundamentos y alcance de la herramienta de métodos numéricos</p>
+      </div>
+      <div class="card-white">
+        <h3 style="color: var(--morado); margin-bottom: 10px;">¿Qué son los métodos numéricos?</h3>
+        <p style="font-size: 14px; line-height: 1.7; color: var(--texto); margin-bottom: 18px;">
+          Los métodos numéricos son procedimientos matemáticos que permiten obtener soluciones aproximadas a problemas cuya solución exacta resulta compleja o imposible mediante métodos algebraicos tradicionales. A través de algoritmos iterativos y descomposiciones matriciales, es posible controlar el error de aproximación mediante una tolerancia definida por el usuario.
+        </p>
+
+        <h3 style="color: var(--morado); margin-bottom: 10px;">Estructura del programa</h3>
+        <ul style="font-size: 14px; line-height: 1.8; padding-left: 20px; margin-bottom: 22px;">
+          <li><strong>Unidad II:</strong> Búsqueda de raíces en ecuaciones no lineales (Bisección, Newton-Raphson y Secante) incluyendo los ejercicios del cuaderno del curso.</li>
+          <li><strong>Unidad III:</strong> Resolución de sistemas lineales A·x = b (Gauss-Jordan, Gauss-Seidel y Jacobi).</li>
+          <li><strong>Unidad IV:</strong> Factorización matricial A = L·U (Doolittle y Crout).</li>
+          <li><strong>Unidad V:</strong> Cálculo de valores y vectores propios (Potencia y Potencia Inversa).</li>
+        </ul>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button type="button" class="btn btn-morado" onclick="showView('unidad2')">Ir a Unidad II (Raíces)</button>
+          <button type="button" class="btn btn-turquesa" onclick="openUnidadMatricial('III')">Ir a Unidad III (Sistemas)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- UNIDAD II -->
+    <section id="view-unidad2" class="view">
+      <div class="header">
+        <h1>Unidad II • Ecuaciones no lineales</h1>
+        <p>Menú secundario: seleccione el método para resolver f(x) = 0</p>
+      </div>
+
+      <div class="card-white">
+        <div class="method-grid">
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--morado);">BISECCIÓN</h3>
+              <div class="sub">Método cerrado por intervalos [a, b]</div>
+              <p>Requiere cambio de signo f(a)·f(b) &lt; 0. Divide el intervalo a la mitad en cada iteración.</p>
+            </div>
+            <button type="button" class="btn btn-morado" onclick="prepararRaices('BISECCION')">Seleccionar Bisección</button>
+          </div>
+
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--turquesa);">NEWTON-RAPHSON</h3>
+              <div class="sub">Método abierto de la tangente</div>
+              <p>Utiliza f(x) y f'(x) a partir de x₀. Incluye el ejercicio f(x) = x² - eˣ - 3x + 2.</p>
+            </div>
+            <button type="button" class="btn btn-turquesa" onclick="prepararRaices('NEWTON')">Seleccionar Newton</button>
+          </div>
+
+          <div class="method-card">
+            <div>
+              <h3 style="color: var(--azul);">SECANTE</h3>
+              <div class="sub">Método abierto sin derivada analítica</div>
+              <p>Usa recta secante con x₀ y x₁. Incluye el ejercicio f(x) = x² - x·eˣ + 4.</p>
+            </div>
+            <button type="button" class="btn btn-azul" onclick="prepararRaices('SECANTE')">Seleccionar Secante</button>
+          </div>
+        </div>
+        <div style="margin-top: 20px;">
+          <button type="button" class="btn btn-gris" onclick="showView('menu-principal')">← Regresar al Menú Principal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPTURA Y RESULTADOS DE RAÍCES -->
+    <section id="view-raices-calc" class="view">
+      <div class="header">
+        <h1 id="titulo-raiz">Cálculo de Raíces</h1>
+        <p id="subtitulo-raiz">Configure los parámetros iniciales y ejecute el algoritmo</p>
+      </div>
+
+      <div class="card-white">
+        <div id="desc-metodo-raiz" class="alert-box alert-info"></div>
+        <div id="error-raiz" class="alert-box alert-error"></div>
+
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="select-ecuacion">Ecuación a resolver f(x):</label>
+            <select id="select-ecuacion" onchange="cambiarEcuacionPreset()">
+              <option value="0">f(x) = x² - x·eˣ + 4  (Ejercicio Secante: x₀=0, x₁=3)</option>
+              <option value="1">f(x) = x² - eˣ - 3x + 2  (Ejercicio Newton: x₀=2)</option>
+              <option value="2">f(x) = x³ - x - 2</option>
+              <option value="3">f(x) = e^(-x) - x</option>
+              <option value="4">f(x) = cos(x) - x</option>
+              <option value="custom">Personalizada (escribir f(x))</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="grupo-custom-fx" style="display: none;">
+            <label for="input-custom-fx">Expresión f(x) (ej. x^2 - x*exp(x) + 4):</label>
+            <input type="text" id="input-custom-fx" value="x^2 - x*exp(x) + 4">
+          </div>
+
+          <div class="form-group" id="grupo-a">
+            <label for="input-a">Extremo inferior (a):</label>
+            <input type="number" step="any" id="input-a" value="1">
+          </div>
+
+          <div class="form-group" id="grupo-b">
+            <label for="input-b">Extremo superior (b):</label>
+            <input type="number" step="any" id="input-b" value="2">
+          </div>
+
+          <div class="form-group" id="grupo-x0" style="display: none;">
+            <label for="input-x0">Valor inicial (x₀):</label>
+            <input type="number" step="any" id="input-x0" value="0">
+          </div>
+
+          <div class="form-group" id="grupo-x1" style="display: none;">
+            <label for="input-x1">Segundo valor inicial (x₁):</label>
+            <input type="number" step="any" id="input-x1" value="3">
+          </div>
+
+          <div class="form-group">
+            <label for="input-tol-raiz">Tolerancia del error:</label>
+            <input type="number" step="any" id="input-tol-raiz" value="0.0001">
+          </div>
+
+          <div class="form-group">
+            <label for="input-iter-raiz">Máximo de iteraciones:</label>
+            <input type="number" id="input-iter-raiz" value="100">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 10px;">
+          <button type="button" class="btn btn-turquesa" onclick="ejecutarRaiz()">Ejecutar método</button>
+          <button type="button" class="btn btn-gris" onclick="showView('unidad2')">← Volver a Unidad II</button>
+        </div>
+      </div>
+
+      <div id="panel-resultados-raiz" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card">
+            <div class="kpi-bar" style="background: var(--turquesa);"></div>
+            <div>
+              <div class="kpi-title">Raíz aproximada (x*)</div>
+              <div class="kpi-val" id="res-raiz-val" style="color: var(--turquesa);">-</div>
+              <div class="kpi-desc" id="res-raiz-msg">-</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-bar" style="background: var(--morado);"></div>
+            <div>
+              <div class="kpi-title">Iteraciones realizadas</div>
+              <div class="kpi-val" id="res-raiz-iter" style="color: var(--morado);">0</div>
+              <div class="kpi-desc">Pasos registrados en tabla</div>
+            </div>
+          </div>
+          <div class="kpi-card">
+            <div class="kpi-bar" id="res-raiz-badge-bar" style="background: var(--turquesa);"></div>
+            <div>
+              <div class="kpi-title">Estado de convergencia</div>
+              <div class="kpi-val" id="res-raiz-estado" style="color: var(--turquesa);">-</div>
+              <div class="kpi-desc">Criterio de tolerancia</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card-white">
+          <h3 style="color: var(--morado); font-size: 16px;" id="titulo-tabla-raiz">Tabla de iteraciones</h3>
+          <div class="table-container">
+            <table class="res-table" id="tabla-raiz"></table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SELECCIÓN UNIDADES III, IV, V -->
+    <section id="view-unidad-matricial" class="view">
+      <div class="header">
+        <h1 id="titulo-unidad-mat">Unidad III</h1>
+        <p id="subtitulo-unidad-mat">Menú secundario: seleccione el método matricial</p>
+      </div>
+      <div class="card-white">
+        <div class="method-grid" id="grid-metodos-mat"></div>
+        <div style="margin-top: 20px;">
+          <button type="button" class="btn btn-gris" onclick="showView('menu-principal')">← Regresar al Menú Principal</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- CAPTURA Y RESULTADOS MATRICIALES -->
+    <section id="view-matriz-calc" class="view">
+      <div class="header">
+        <h1 id="titulo-metodo-mat">Captura Matricial</h1>
+        <p id="subtitulo-metodo-mat">Configure la dimensión n×n (hasta 10×10) e ingrese los coeficientes</p>
+      </div>
+
+      <div class="card-white">
+        <div id="error-matriz" class="alert-box alert-error"></div>
+
+        <div style="display: flex; align-items: center; gap: 14px; flex-wrap: wrap;">
+          <label for="select-dim" style="font-size: 13px; font-weight: 700;">Dimensión de la matriz (n×n):</label>
+          <select id="select-dim" style="padding: 8px 12px; border-radius: 6px; border: 1px solid var(--borde); font-weight: 700;" onchange="generarCuadriculaMatriz()">
+            <option value="2">2 × 2</option>
+            <option value="3" selected>3 × 3</option>
+            <option value="4">4 × 4</option>
+            <option value="5">5 × 5</option>
+            <option value="6">6 × 6</option>
+            <option value="7">7 × 7</option>
+            <option value="8">8 × 8</option>
+            <option value="9">9 × 9</option>
+            <option value="10">10 × 10</option>
+          </select>
+        </div>
+
+        <div class="matrix-wrapper" id="contenedor-cuadricula"></div>
+
+        <div class="form-grid" id="parametros-iter-matriz" style="display: none;">
+          <div class="form-group">
+            <label for="input-tol-mat">Tolerancia del error:</label>
+            <input type="number" step="any" id="input-tol-mat" value="0.0001">
+          </div>
+          <div class="form-group">
+            <label for="input-iter-mat">Máximo de iteraciones:</label>
+            <input type="number" id="input-iter-mat" value="100">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-top: 14px;">
+          <button type="button" class="btn btn-turquesa" onclick="ejecutarMatriz()">Resolver sistema</button>
+          <button type="button" class="btn btn-gris" id="btn-volver-unidad-mat">← Volver a la unidad</button>
+        </div>
+      </div>
+
+      <div id="panel-resultados-matriz" style="display: none;">
+        <div class="card-white">
+          <h3 style="color: var(--morado); font-size: 16px;" id="titulo-res-mat">Resultados obtenidos</h3>
+          <p id="msg-res-mat" style="font-size: 13px; color: var(--gris); margin-top: 4px;"></p>
+          <div class="table-container" id="contenedor-tabla-mat">
+            <table class="res-table" id="tabla-mat"></table>
+          </div>
+          <pre class="detail-box" id="detalle-mat"></pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- PANTALLA DE SALIDA -->
+    <section id="view-salida" class="view">
+      <div class="card-white" style="text-align: center; padding: 60px 24px;">
+        <h1 style="color: var(--morado); margin-bottom: 12px;">Sesión Finalizada</h1>
+        <p style="font-size: 15px; color: var(--gris); margin-bottom: 24px;">
+          Has salido del Sistema de Solución Numérica de Ecuaciones (UNAM FES Acatlán).<br>
+          Puedes cerrar esta pestaña del navegador o volver a iniciar el programa.
+        </p>
+        <button type="button" class="btn btn-morado" onclick="showView('portada')">Volver a iniciar</button>
+      </div>
+    </section>
+
+  </main>
+
+<script>
+  function showView(viewId, btn) {
+    document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+    var target = document.getElementById('view-' + viewId);
+    if (target) target.classList.add('active');
+
+    if (btn) {
+      document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+    }
+  }
+
+  function salirPrograma() {
+    if (confirm('¿Está seguro de que desea salir del programa?')) {
+      showView('salida');
+    }
+  }
+
+  function fmt(num) {
+    if (typeof num !== 'number' || !isFinite(num)) return String(num);
+    return num.toFixed(4);
+  }
+
+  var PRESETS = [
+    {
+      nombre: 'f(x) = x² - x·eˣ + 4',
+      f: function(x) { return x * x - x * Math.exp(x) + 4; },
+      df: function(x) { return 2 * x - Math.exp(x) * (1 + x); },
+      a: 1, b: 2, x0: 0, x1: 3
+    },
+    {
+      nombre: 'f(x) = x² - eˣ - 3x + 2',
+      f: function(x) { return x * x - Math.exp(x) - 3 * x + 2; },
+      df: function(x) { return 2 * x - Math.exp(x) - 3; },
+      a: 0, b: 1, x0: 2, x1: 3
+    },
+    {
+      nombre: 'f(x) = x³ - x - 2',
+      f: function(x) { return Math.pow(x, 3) - x - 2; },
+      df: function(x) { return 3 * Math.pow(x, 2) - 1; },
+      a: 1, b: 2, x0: 1.5, x1: 2
+    },
+    {
+      nombre: 'f(x) = e^(-x) - x',
+      f: function(x) { return Math.exp(-x) - x; },
+      df: function(x) { return -Math.exp(-x) - 1; },
+      a: 0, b: 1, x0: 0.5, x1: 1
+    },
+    {
+      nombre: 'f(x) = cos(x) - x',
+      f: function(x) { return Math.cos(x) - x; },
+      df: function(x) { return -Math.sin(x) - 1; },
+      a: 0, b: 1, x0: 0.5, x1: 1
+    }
+  ];
+
+  var metodoRaizActual = 'BISECCION';
+
+  function compilarFuncionPersonalizada(expr) {
+    var limpia = expr.trim()
+      .replace(/\^/g, '**')
+      .replace(/\bsen\b/gi, 'Math.sin')
+      .replace(/\bsin\b/gi, 'Math.sin')
+      .replace(/\bcos\b/gi, 'Math.cos')
+      .replace(/\btan\b/gi, 'Math.tan')
+      .replace(/\bexp\b/gi, 'Math.exp')
+      .replace(/\bln\b/gi, 'Math.log')
+      .replace(/\blog\b/gi, 'Math.log10')
+      .replace(/\bsqrt\b/gi, 'Math.sqrt')
+      .replace(/\bpi\b/gi, 'Math.PI')
+      .replace(/\be\b/g, 'Math.E');
+
+    var fn = new Function('x', 'return ' + limpia + ';');
+    var test = fn(1.0);
+    if (typeof test !== 'number' || Number.isNaN(test)) {
+      throw new Error('La expresión f(x) no es válida.');
+    }
+    return {
+      nombre: 'f(x) = ' + expr,
+      f: fn,
+      df: function(x) {
+        var h = 1e-7;
+        return (fn(x + h) - fn(x - h)) / (2 * h);
+      }
+    };
+  }
+
+  function prepararRaices(metodo) {
+    metodoRaizActual = metodo;
+    document.getElementById('panel-resultados-raiz').style.display = 'none';
+    document.getElementById('error-raiz').style.display = 'none';
+
+    var titulos = {
+      'BISECCION': ['Método de Bisección', 'Divide sucesivamente el intervalo [a, b] a la mitad c = (a + b) / 2 conservando el cambio de signo.'],
+      'NEWTON': ['Método de Newton-Raphson', 'Fórmula del curso: x_{n+1} = x_n - f(x_n) / f\'(x_n). Predeterminado con f(x) = x² - eˣ - 3x + 2 y x₀ = 2.'],
+      'SECANTE': ['Método de la Secante', 'Fórmula del curso: x_{n+1} = x_n - f(x_n)·(x_n - x_{n-1}) / (f(x_n) - f(x_{n-1})). Predeterminado con f(x) = x² - x·eˣ + 4, x₀ = 0, x₁ = 3.']
+    };
+
+    document.getElementById('titulo-raiz').textContent = titulos[metodo][0];
+    document.getElementById('desc-metodo-raiz').textContent = titulos[metodo][1];
+
+    document.getElementById('grupo-a').style.display = (metodo === 'BISECCION') ? 'flex' : 'none';
+    document.getElementById('grupo-b').style.display = (metodo === 'BISECCION') ? 'flex' : 'none';
+    document.getElementById('grupo-x0').style.display = (metodo !== 'BISECCION') ? 'flex' : 'none';
+    document.getElementById('grupo-x1').style.display = (metodo === 'SECANTE') ? 'flex' : 'none';
+
+    // Seleccionar automáticamente el ejercicio correspondiente del cuaderno
+    var sel = document.getElementById('select-ecuacion');
+    if (metodo === 'SECANTE') {
+      sel.value = '0';
+    } else if (metodo === 'NEWTON') {
+      sel.value = '1';
+    } else {
+      sel.value = '2';
+    }
+
+    cambiarEcuacionPreset();
+    showView('raices-calc');
+  }
+
+  function cambiarEcuacionPreset() {
+    var val = document.getElementById('select-ecuacion').value;
+    var customBox = document.getElementById('grupo-custom-fx');
+    if (val === 'custom') {
+      customBox.style.display = 'flex';
+    } else {
+      customBox.style.display = 'none';
+      var p = PRESETS[parseInt(val, 10)];
+      document.getElementById('input-a').value = p.a;
+      document.getElementById('input-b').value = p.b;
+      document.getElementById('input-x0').value = p.x0;
+      document.getElementById('input-x1').value = p.x1;
+    }
+  }
+
+  function resolverBiseccion(eq, a, b, tol, maxIter) {
+    if (!isFinite(a) || !isFinite(b) || a >= b) {
+      throw new Error('El intervalo no es válido: debe cumplirse a < b.');
+    }
+    var fa = eq.f(a);
+    var fb = eq.f(b);
+    if (!isFinite(fa) || !isFinite(fb)) {
+      throw new Error('La función produjo un valor no finito en los extremos.');
+    }
+
+    var columnas = ['n', 'a', 'b', 'c', 'f(a)', 'f(b)', 'f(c)', 'Error'];
+    var filas = [];
+
+    if (fa === 0 || fb === 0) {
+      var raiz = (fa === 0) ? a : b;
+      filas.push([1, fmt(a), fmt(b), fmt(raiz), fmt(fa), fmt(fb), '0.0000', '0.0000']);
+      return { columnas: columnas, filas: filas, solucion: raiz, convergio: true, mensaje: 'Se encontró una raíz exacta en un extremo.' };
+    }
+
+    if (Math.sign(fa) === Math.sign(fb)) {
+      throw new Error('Los extremos tienen el mismo signo: f(a) = ' + fmt(fa) + ' y f(b) = ' + fmt(fb) + '. Pruebe otro intervalo.');
+    }
+
+    var raizAprox = a;
+    var convergio = false;
+
+    for (var i = 1; i <= maxIter; i++) {
+      var c = a + (b - a) / 2.0;
+      var fc = eq.f(c);
+      var error = (b - a) / 2.0;
+      raizAprox = c;
+
+      filas.push([i, fmt(a), fmt(b), fmt(c), fmt(fa), fmt(fb), fmt(fc), fmt(error)]);
+
+      if (fc === 0 || error < tol) {
+        convergio = true;
+        break;
+      }
+
+      if (Math.sign(fa) === Math.sign(fc)) {
+        a = c;
+        fa = fc;
+      } else {
+        b = c;
+        fb = fc;
+      }
+    }
+
+    return {
+      columnas: columnas,
+      filas: filas,
+      solucion: raizAprox,
+      convergio: convergio,
+      mensaje: convergio ? 'Se alcanzó la tolerancia solicitada.' : 'Se alcanzó el máximo de iteraciones.'
+    };
+  }
+
+  // Formato exacto del curso (libreta y Excel): n = 1, 2, 3... mostrando X_n, f(X_n), f'(X_n), X_{n+1}, Error
+  function resolverNewton(eq, x0, tol, maxIter) {
+    if (!isFinite(x0)) throw new Error('El valor inicial x₀ debe ser un número válido.');
+    var columnas = ['n', 'Xn', 'f(Xn)', "f'(Xn)", 'Xn+1', 'Error'];
+    var filas = [];
+    var x = x0;
+    var convergio = false;
+
+    for (var i = 1; i <= maxIter; i++) {
+      var fx = eq.f(x);
+      var dfx = eq.df(x);
+      if (!isFinite(fx) || !isFinite(dfx)) throw new Error('Evaluación no finita durante las iteraciones.');
+      if (Math.abs(dfx) < 1e-14) throw new Error('Derivada cercana a cero en la iteración ' + i + ' (x = ' + fmt(x) + ').');
+
+      var xNext = x - fx / dfx;
+      var error = Math.abs(xNext - x);
+      filas.push([i, fmt(x), fmt(fx), fmt(dfx), fmt(xNext), fmt(error)]);
+
+      if (Math.abs(fx) < tol || error < tol) {
+        convergio = true;
+        x = xNext;
+        // Agregar fila final de verificación donde f(Xn) ≈ 0 como en la tabla del curso
+        var fxFinal = eq.f(x);
+        var dfxFinal = eq.df(x);
+        filas.push([i + 1, fmt(x), fmt(fxFinal), fmt(dfxFinal), fmt(x), '0.0000']);
+        break;
+      }
+      x = xNext;
+    }
+
+    return {
+      columnas: columnas,
+      filas: filas,
+      solucion: x,
+      convergio: convergio,
+      mensaje: convergio ? 'Se alcanzó la tolerancia solicitada.' : 'Se alcanzó el máximo de iteraciones.'
+    };
+  }
+
+  // Formato exacto del curso (libreta y Excel): fila 1 = x0, fila 2 = x1, fila 3+ = iteraciones con Xn, f(Xn) y Error
+  function resolverSecante(eq, x0, x1, tol, maxIter) {
+    if (!isFinite(x0) || !isFinite(x1) || x0 === x1) {
+      throw new Error('Los valores iniciales x₀ y x₁ deben ser válidos y distintos.');
+    }
+    var columnas = ['n', 'Xn', 'f(Xn)', 'Error'];
+    var filas = [];
+
+    var prev = x0;
+    var curr = x1;
+    var fPrev = eq.f(prev);
+    var fCurr = eq.f(curr);
+
+    filas.push([1, fmt(prev), fmt(fPrev), '-']);
+    filas.push([2, fmt(curr), fmt(fCurr), fmt(Math.abs(curr - prev))]);
+
+    var convergio = false;
+
+    for (var i = 3; i <= maxIter + 2; i++) {
+      if (!isFinite(fPrev) || !isFinite(fCurr)) throw new Error('Evaluación no finita durante las iteraciones.');
+      if (Math.abs(fCurr - fPrev) < 1e-14) {
+        throw new Error('División entre cero en la fila ' + i + ': f(Xn) - f(Xn-1) ≈ 0.');
+      }
+
+      var next = curr - fCurr * (curr - prev) / (fCurr - fPrev);
+      var fNext = eq.f(next);
+      var error = Math.abs(next - curr);
+
+      filas.push([i, fmt(next), fmt(fNext), fmt(error)]);
+
+      prev = curr;
+      fPrev = fCurr;
+      curr = next;
+      fCurr = fNext;
+
+      if (Math.abs(fCurr) < tol && error < tol) {
+        convergio = true;
+        break;
+      }
+    }
+
+    return {
+      columnas: columnas,
+      filas: filas,
+      solucion: curr,
+      convergio: convergio,
+      mensaje: convergio ? 'Se alcanzó la tolerancia solicitada.' : 'Se alcanzó el máximo de iteraciones.'
+    };
+  }
+
+  function ejecutarRaiz() {
+    var errBox = document.getElementById('error-raiz');
+    errBox.style.display = 'none';
+
+    try {
+      var tol = parseFloat(document.getElementById('input-tol-raiz').value);
+      var maxIter = parseInt(document.getElementById('input-iter-raiz').value, 10);
+      if (!isFinite(tol) || tol <= 0 || !Number.isInteger(maxIter) || maxIter <= 0) {
+        throw new Error('La tolerancia y el máximo de iteraciones deben ser positivos.');
+      }
+
+      var sel = document.getElementById('select-ecuacion').value;
+      var eq = (sel === 'custom')
+        ? compilarFuncionPersonalizada(document.getElementById('input-custom-fx').value)
+        : PRESETS[parseInt(sel, 10)];
+
+      var res;
+      if (metodoRaizActual === 'BISECCION') {
+        var a = parseFloat(document.getElementById('input-a').value);
+        var b = parseFloat(document.getElementById('input-b').value);
+        res = resolverBiseccion(eq, a, b, tol, maxIter);
+      } else if (metodoRaizActual === 'NEWTON') {
+        var x0 = parseFloat(document.getElementById('input-x0').value);
+        res = resolverNewton(eq, x0, tol, maxIter);
+      } else {
+        var x0s = parseFloat(document.getElementById('input-x0').value);
+        var x1s = parseFloat(document.getElementById('input-x1').value);
+        res = resolverSecante(eq, x0s, x1s, tol, maxIter);
+      }
+
+      document.getElementById('res-raiz-val').textContent = fmt(res.solucion);
+      document.getElementById('res-raiz-msg').textContent = res.mensaje;
+      document.getElementById('res-raiz-iter').textContent = res.filas.length;
+
+      var estadoEl = document.getElementById('res-raiz-estado');
+      var barEl = document.getElementById('res-raiz-badge-bar');
+      estadoEl.textContent = res.convergio ? 'CONVERGIÓ' : 'NO CONVERGIÓ';
+      estadoEl.style.color = res.convergio ? 'var(--turquesa)' : 'var(--rojo)';
+      barEl.style.background = res.convergio ? 'var(--turquesa)' : 'var(--rojo)';
+
+      document.getElementById('titulo-tabla-raiz').textContent =
+        'Tabla de resultados (Formato del curso) — ' + eq.nombre;
+
+      renderizarTabla('tabla-raiz', res.columnas, res.filas, true);
+      document.getElementById('panel-resultados-raiz').style.display = 'block';
+
+    } catch (e) {
+      errBox.textContent = e.message;
+      errBox.style.display = 'block';
+      document.getElementById('panel-resultados-raiz').style.display = 'none';
+    }
+  }
+
+  function renderizarTabla(tableId, columnas, filas, resaltarUltima) {
+    var tabla = document.getElementById(tableId);
+    var html = '<thead><tr>';
+    for (var i = 0; i < columnas.length; i++) {
+      html += '<th>' + columnas[i] + '</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    for (var r = 0; r < filas.length; r++) {
+      var esUltima = resaltarUltima && (r === filas.length - 1);
+      html += '<tr class="' + (esUltima ? 'converged-row' : '') + '">';
+      for (var c = 0; c < filas[r].length; c++) {
+        html += '<td>' + filas[r][c] + '</td>';
+      }
+      html += '</tr>';
+    }
+
+    html += '</tbody>';
+    tabla.innerHTML = html;
+  }
+
+  var unidadMatActual = 'III';
+  var metodoMatActual = 'GAUSS-JORDAN';
+
+  var CONFIG_UNIDADES = {
+    'III': {
+      titulo: 'Unidad III • Sistemas de ecuaciones lineales',
+      subtitulo: 'Menú secundario: resolución de sistemas A·x = b',
+      metodos: [
+        { id: 'GAUSS-JORDAN', nombre: 'GAUSS-JORDAN', sub: 'Método directo por eliminación', desc: 'Transforma [A | b] mediante operaciones elementales hasta obtener la solución exacta.', color: 'btn-morado', txtColor: 'var(--morado)' },
+        { id: 'GAUSS-SEIDEL', nombre: 'GAUSS-SEIDEL', sub: 'Método iterativo acelerado', desc: 'Actualiza cada incógnita utilizando inmediatamente los valores recién calculados.', color: 'btn-turquesa', txtColor: 'var(--turquesa)' },
+        { id: 'JACOBI', nombre: 'JACOBI', sub: 'Método iterativo simultáneo', desc: 'Calcula todas las incógnitas usando exclusivamente los valores de la iteración anterior.', color: 'btn-azul', txtColor: 'var(--azul)' }
+      ]
+    },
+    'IV': {
+      titulo: 'Unidad IV • Factorización LU',
+      subtitulo: 'Menú secundario: descomposición de la matriz A en L y U',
+      metodos: [
+        { id: 'DOOLITTLE', nombre: 'DOOLITTLE', sub: 'Factorización A = L·U (diag(L) = 1)', desc: 'Descompone A con unos en la diagonal de L y resuelve L·y = b y U·x = y.', color: 'btn-morado', txtColor: 'var(--morado)' },
+        { id: 'CROUT', nombre: 'CROUT', sub: 'Factorización A = L·U (diag(U) = 1)', desc: 'Descompone A con unos en la diagonal de U y aplica sustitución progresiva y regresiva.', color: 'btn-turquesa', txtColor: 'var(--turquesa)' }
+      ]
+    },
+    'V': {
+      titulo: 'Unidad V • Valores y vectores propios',
+      subtitulo: 'Menú secundario: aproximación de λ y v tales que A·v = λ·v',
+      metodos: [
+        { id: 'POTENCIA', nombre: 'POTENCIA', sub: 'Valor propio dominante', desc: 'Multiplica repetidamente A por un vector normalizado para hallar el λ de mayor módulo.', color: 'btn-morado', txtColor: 'var(--morado)' },
+        { id: 'POTENCIA INVERSA', nombre: 'POTENCIA INVERSA', sub: 'Valor propio de menor módulo', desc: 'Resuelve sistemas lineales sucesivos para aproximar el eigenvalor mínimo.', color: 'btn-naranja', txtColor: 'var(--naranja)' }
+      ]
+    }
+  };
+
+  function openUnidadMatricial(unidad, btn) {
+    unidadMatActual = unidad;
+    var cfg = CONFIG_UNIDADES[unidad];
+    document.getElementById('titulo-unidad-mat').textContent = cfg.titulo;
+    document.getElementById('subtitulo-unidad-mat').textContent = cfg.subtitulo;
+
+    var grid = document.getElementById('grid-metodos-mat');
+    var cards = '';
+    for (var i = 0; i < cfg.metodos.length; i++) {
+      var m = cfg.metodos[i];
+      cards += '<div class="method-card"><div>' +
+        '<h3 style="color:' + m.txtColor + ';">' + m.nombre + '</h3>' +
+        '<div class="sub">' + m.sub + '</div>' +
+        '<p>' + m.desc + '</p></div>' +
+        '<button type="button" class="btn ' + m.color + '" onclick="abrirCapturaMatriz(\'' + m.id + '\')">Seleccionar</button>' +
+        '</div>';
+    }
+    grid.innerHTML = cards;
+
+    showView('unidad-matricial', btn);
+  }
+
+  function abrirCapturaMatriz(metodo) {
+    metodoMatActual = metodo;
+    document.getElementById('titulo-metodo-mat').textContent = 'Captura Matricial • ' + metodo;
+    document.getElementById('panel-resultados-matriz').style.display = 'none';
+    document.getElementById('error-matriz').style.display = 'none';
+
+    var usaIter = (metodo === 'GAUSS-SEIDEL' || metodo === 'JACOBI' || unidadMatActual === 'V');
+    document.getElementById('parametros-iter-matriz').style.display = usaIter ? 'grid' : 'none';
+
+    document.getElementById('btn-volver-unidad-mat').onclick = function() {
+      openUnidadMatricial(unidadMatActual);
+    };
+
+    generarCuadriculaMatriz();
+    showView('matriz-calc');
+  }
+
+  function generarCuadriculaMatriz() {
+    var n = parseInt(document.getElementById('select-dim').value, 10);
+    var esPropio = (unidadMatActual === 'V');
+
+    var html = '<table class="matrix-table"><thead><tr>';
+    for (var j = 0; j < n; j++) {
+      html += '<th>x' + (j + 1) + '</th>';
+    }
+    if (!esPropio) {
+      html += '<th style="color: var(--turquesa);">Vector b</th>';
+    }
+    html += '</tr></thead><tbody>';
+
+    for (var i = 0; i < n; i++) {
+      html += '<tr>';
+      for (var c = 0; c < n; c++) {
+        var val = (i === c) ? 10 : 1;
+        html += '<td><input type="number" step="any" id="mat-' + i + '-' + c + '" value="' + val + '"></td>';
+      }
+      if (!esPropio) {
+        var valB = 10 + (n - 1);
+        html += '<td><input type="number" step="any" class="vec-b" id="vec-' + i + '" value="' + valB + '"></td>';
+      }
+      html += '</tr>';
+    }
+    html += '</tbody></table>';
+    document.getElementById('contenedor-cuadricula').innerHTML = html;
+  }
+
+  function solveGaussJordan(A, b) {
+    var n = A.length;
+    var M = [];
+    for (var i = 0; i < n; i++) {
+      M.push(A[i].concat([b[i]]));
+    }
+
+    for (var k = 0; k < n; k++) {
+      var maxRow = k;
+      for (var i2 = k + 1; i2 < n; i2++) {
+        if (Math.abs(M[i2][k]) > Math.abs(M[maxRow][k])) maxRow = i2;
+      }
+      var temp = M[k];
+      M[k] = M[maxRow];
+      M[maxRow] = temp;
+
+      var pivote = M[k][k];
+      if (Math.abs(pivote) < 1e-12) throw new Error('La matriz es singular o no tiene solución única.');
+
+      for (var j = k; j <= n; j++) M[k][j] /= pivote;
+
+      for (var r = 0; r < n; r++) {
+        if (r !== k) {
+          var factor = M[r][k];
+          for (var c = k; c <= n; c++) {
+            M[r][c] -= factor * M[k][c];
+          }
+        }
+      }
+    }
+
+    var columnas = ['Incógnita', 'Valor calculado'];
+    var filas = [];
+    for (var idx = 0; idx < n; idx++) {
+      filas.push(['x' + (idx + 1), fmt(M[idx][n])]);
+    }
+    var nl = String.fromCharCode(10);
+    var matStr = M.map(function(row) {
+      return row.map(function(v) { return fmt(v); }).join('   ');
+    }).join(nl);
+    var detalle = 'Matriz identidad reducida [I | x]:' + nl + matStr;
+
+    return { columnas: columnas, filas: filas, detalle: detalle, mensaje: 'Sistema resuelto exitosamente por eliminación Gauss-Jordan.' };
+  }
+
+  function solveIterativoLineal(A, b, tol, maxIter, esSeidel) {
+    var n = A.length;
+    var x = new Array(n).fill(0);
+    var columnas = ['n'];
+    for (var k = 0; k < n; k++) columnas.push('x' + (k + 1));
+    columnas.push('Error');
+
+    var filas = [];
+    var convergio = false;
+
+    for (var iter = 1; iter <= maxIter; iter++) {
+      var xNuevo = x.slice();
+      for (var i = 0; i < n; i++) {
+        if (Math.abs(A[i][i]) < 1e-12) throw new Error('Elemento diagonal nulo en fila ' + (i + 1) + '.');
+        var suma = 0;
+        for (var j = 0; j < n; j++) {
+          if (j !== i) {
+            suma += A[i][j] * (esSeidel ? xNuevo[j] : x[j]);
+          }
+        }
+        xNuevo[i] = (b[i] - suma) / A[i][i];
+      }
+
+      var error = 0;
+      for (var m = 0; m < n; m++) {
+        error = Math.max(error, Math.abs(xNuevo[m] - x[m]));
+      }
+      x = xNuevo;
+      var row = [iter];
+      for (var p = 0; p < n; p++) row.push(fmt(x[p]));
+      row.push(fmt(error));
+      filas.push(row);
+
+      if (error < tol) {
+        convergio = true;
+        break;
+      }
+    }
+
+    var nl = String.fromCharCode(10);
+    var detalle = 'Solución final aproximada:' + nl + x.map(function(v, i) { return 'x' + (i + 1) + ' = ' + fmt(v); }).join(nl);
+    return {
+      columnas: columnas,
+      filas: filas,
+      detalle: detalle,
+      mensaje: convergio ? 'Convergencia alcanzada dentro de la tolerancia.' : 'Se alcanzó el máximo de iteraciones sin converger.'
+    };
+  }
+
+  function solveLU(A, b, tipo) {
+    var n = A.length;
+    var L = [];
+    var U = [];
+    for (var r = 0; r < n; r++) {
+      L.push(new Array(n).fill(0));
+      U.push(new Array(n).fill(0));
+    }
+
+    if (tipo === 'DOOLITTLE') {
+      for (var i = 0; i < n; i++) {
+        L[i][i] = 1;
+        for (var k = i; k < n; k++) {
+          var sum = 0;
+          for (var j = 0; j < i; j++) sum += L[i][j] * U[j][k];
+          U[i][k] = A[i][k] - sum;
+        }
+        if (Math.abs(U[i][i]) < 1e-12) throw new Error('Pivote nulo encontrado durante factorización Doolittle.');
+        for (var k2 = i + 1; k2 < n; k2++) {
+          var sum2 = 0;
+          for (var j2 = 0; j2 < i; j2++) sum2 += L[k2][j2] * U[j2][i];
+          L[k2][i] = (A[k2][i] - sum2) / U[i][i];
+        }
+      }
+    } else {
+      for (var j3 = 0; j3 < n; j3++) {
+        U[j3][j3] = 1;
+        for (var i3 = j3; i3 < n; i3++) {
+          var sum3 = 0;
+          for (var k3 = 0; k3 < j3; k3++) sum3 += L[i3][k3] * U[k3][j3];
+          L[i3][j3] = A[i3][j3] - sum3;
+        }
+        if (Math.abs(L[j3][j3]) < 1e-12) throw new Error('Pivote nulo encontrado durante factorización Crout.');
+        for (var i4 = j3 + 1; i4 < n; i4++) {
+          var sum4 = 0;
+          for (var k4 = 0; k4 < j3; k4++) sum4 += L[j3][k4] * U[k4][i4];
+          U[j3][i4] = (A[j3][i4] - sum4) / L[j3][j3];
+        }
+      }
+    }
+
+    var y = new Array(n).fill(0);
+    for (var yi = 0; yi < n; yi++) {
+      var sy = 0;
+      for (var yj = 0; yj < yi; yj++) sy += L[yi][yj] * y[yj];
+      y[yi] = (b[yi] - sy) / L[yi][yi];
+    }
+
+    var x = new Array(n).fill(0);
+    for (var xi = n - 1; xi >= 0; xi--) {
+      var sx = 0;
+      for (var xj = xi + 1; xj < n; xj++) sx += U[xi][xj] * x[xj];
+      x[xi] = (y[xi] - sx) / U[xi][xi];
+    }
+
+    var columnas = ['Incógnita', 'Vector y (L·y=b)', 'Solución x (U·x=y)'];
+    var filas = [];
+    for (var idx = 0; idx < n; idx++) {
+      filas.push(['x' + (idx + 1), fmt(y[idx]), fmt(x[idx])]);
+    }
+
+    var nl = String.fromCharCode(10);
+    var fmtMat = function(M) {
+      return M.map(function(row) {
+        return row.map(function(v) { return fmt(v); }).join('   ');
+      }).join(nl);
+    };
+    var detalle = 'Matriz Triangular Inferior (L):' + nl + fmtMat(L) + nl + nl + 'Matriz Triangular Superior (U):' + nl + fmtMat(U);
+
+    return { columnas: columnas, filas: filas, detalle: detalle, mensaje: 'Factorización ' + tipo + ' completada exitosamente.' };
+  }
+
+  function solvePotencia(A, tol, maxIter, inversa) {
+    var n = A.length;
+    var v = new Array(n).fill(1);
+    var lambda = 0;
+    var columnas = ['n', 'Valor propio (λ)', 'Error'];
+    var filas = [];
+    var convergio = false;
+
+    for (var iter = 1; iter <= maxIter; iter++) {
+      var w;
+      if (!inversa) {
+        w = A.map(function(row) {
+          var acc = 0;
+          for (var j = 0; j < n; j++) acc += row[j] * v[j];
+          return acc;
+        });
+      } else {
+        var resGJ = solveGaussJordan(A, v);
+        w = resGJ.filas.map(function(r) { return parseFloat(r[1]); });
+      }
+
+      var maxVal = w[0];
+      for (var i = 1; i < n; i++) {
+        if (Math.abs(w[i]) > Math.abs(maxVal)) maxVal = w[i];
+      }
+      if (Math.abs(maxVal) < 1e-14) throw new Error('El vector se anuló durante las iteraciones.');
+
+      v = w.map(function(val) { return val / maxVal; });
+      var nuevoLambda = inversa ? (1.0 / maxVal) : maxVal;
+      var error = Math.abs(nuevoLambda - lambda);
+      lambda = nuevoLambda;
+
+      filas.push([iter, fmt(lambda), fmt(error)]);
+
+      if (error < tol && iter > 1) {
+        convergio = true;
+        break;
+      }
+    }
+
+    var nl = String.fromCharCode(10);
+    var detalle = 'Valor propio (λ) aproximado: ' + fmt(lambda) + nl + nl + 'Vector propio normalizado (v):' + nl +
+      v.map(function(val, i) { return 'v[' + (i + 1) + '] = ' + fmt(val); }).join(nl);
+
+    return {
+      columnas: columnas,
+      filas: filas,
+      detalle: detalle,
+      mensaje: convergio ? 'Eigenvalor aproximado dentro de la tolerancia.' : 'Se alcanzó el máximo de iteraciones.'
+    };
+  }
+
+  function ejecutarMatriz() {
+    var errBox = document.getElementById('error-matriz');
+    errBox.style.display = 'none';
+
+    try {
+      var n = parseInt(document.getElementById('select-dim').value, 10);
+      var esPropio = (unidadMatActual === 'V');
+      var A = [];
+      var b = esPropio ? null : [];
+
+      for (var i = 0; i < n; i++) {
+        var row = [];
+        for (var j = 0; j < n; j++) {
+          var val = parseFloat(document.getElementById('mat-' + i + '-' + j).value);
+          if (!isFinite(val)) throw new Error('Todos los coeficientes de la matriz deben ser números válidos.');
+          row.push(val);
+        }
+        A.push(row);
+        if (!esPropio) {
+          var valB = parseFloat(document.getElementById('vec-' + i).value);
+          if (!isFinite(valB)) throw new Error('Todos los elementos del vector b deben ser números válidos.');
+          b.push(valB);
+        }
+      }
+
+      var tol = parseFloat(document.getElementById('input-tol-mat').value);
+      var maxIter = parseInt(document.getElementById('input-iter-mat').value, 10);
+
+      var res;
+      if (metodoMatActual === 'GAUSS-JORDAN') {
+        res = solveGaussJordan(A, b);
+      } else if (metodoMatActual === 'GAUSS-SEIDEL') {
+        res = solveIterativoLineal(A, b, tol, maxIter, true);
+      } else if (metodoMatActual === 'JACOBI') {
+        res = solveIterativoLineal(A, b, tol, maxIter, false);
+      } else if (metodoMatActual === 'DOOLITTLE') {
+        res = solveLU(A, b, 'DOOLITTLE');
+      } else if (metodoMatActual === 'CROUT') {
+        res = solveLU(A, b, 'CROUT');
+      } else if (metodoMatActual === 'POTENCIA') {
+        res = solvePotencia(A, tol, maxIter, false);
+      } else {
+        res = solvePotencia(A, tol, maxIter, true);
+      }
+
+      document.getElementById('titulo-res-mat').textContent = 'Resultados • ' + metodoMatActual;
+      document.getElementById('msg-res-mat').textContent = res.mensaje;
+      renderizarTabla('tabla-mat', res.columnas, res.filas, metodoMatActual !== 'GAUSS-JORDAN' && unidadMatActual !== 'IV');
+      document.getElementById('detalle-mat').textContent = res.detalle;
+      document.getElementById('panel-resultados-matriz').style.display = 'block';
+
+    } catch (e) {
+      errBox.textContent = e.message;
+      errBox.style.display = 'block';
+      document.getElementById('panel-resultados-matriz').style.display = 'none';
+    }
+  }
+</script>
+</body>
+</html>
